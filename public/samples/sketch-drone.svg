@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="1200" height="900">
+  <!-- Simulation d'une photo de tableau Velleda : fond légèrement gris, reflets, traits de feutre irréguliers -->
+  <defs>
+    <radialGradient id="glare" cx="0.3" cy="0.25" r="0.6"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e3e6ea"/></radialGradient>
+  </defs>
+  <rect width="1200" height="900" fill="#cfd4da"/>
+  <rect x="40" y="30" width="1120" height="840" rx="14" fill="url(#glare)" stroke="#9aa3ad" stroke-width="18"/>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M420 470 C430 380 560 330 650 345 C760 360 820 420 810 480 C800 560 680 590 590 585 C480 580 415 545 420 470 Z" stroke="#1b3fb5" stroke-width="12"/>
+    <path d="M470 400 L330 300 M760 395 L900 290 M480 545 L340 650 M760 545 L890 650" stroke="#1b3fb5" stroke-width="11"/>
+    <path d="M250 300 C290 280 370 285 410 300 M830 290 C870 272 950 275 980 290 M260 650 C300 632 380 636 420 650 M820 650 C860 632 940 635 970 650" stroke="#1b3fb5" stroke-width="10"/>
+    <circle cx="570" cy="450" r="38" stroke="#111" stroke-width="10"/>
+    <circle cx="680" cy="450" r="38" stroke="#111" stroke-width="10"/>
+    <circle cx="580" cy="455" r="10" fill="#111" stroke="#111" stroke-width="6"/>
+    <circle cx="690" cy="455" r="10" fill="#111" stroke="#111" stroke-width="6"/>
+    <path d="M580 525 C610 548 650 548 680 525" stroke="#c0182b" stroke-width="10"/>
+    <path d="M620 345 L610 250 M610 250 L570 215 M610 250 L655 215" stroke="#1a8a3a" stroke-width="10"/>
+    <path d="M820 470 L900 440 L880 470 L930 470 L870 510" stroke="#e0a100" stroke-width="10"/>
+    <path d="M430 480 C390 470 370 500 380 520" stroke="#c0182b" stroke-width="8"/>
+  </g>
+</svg>

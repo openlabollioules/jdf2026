@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs><clipPath id="bubble"><circle cx="200" cy="150" r="118"/></clipPath></defs>
+  <circle cx="200" cy="150" r="118" fill="#5FD4FF" opacity="0.18"/>
+  <g clip-path="url(#bubble)" fill="none" stroke="#35C2C9" stroke-width="2.5" opacity="0.8">
+    <path d="M100 60 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z M140 60 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z M180 60 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z M220 60 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z M260 60 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z"/>
+    <path d="M80 96 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z M280 96 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z M80 168 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z M280 168 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z"/>
+    <path d="M100 204 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z M140 204 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z M180 204 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z M220 204 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z M260 204 l20 -12 l20 12 v24 l-20 12 l-20 -12 Z"/>
+  </g>
+  <circle cx="200" cy="150" r="118" fill="none" stroke="#35C2C9" stroke-width="5"/>
+  <path d="M130 152 C130 138 160 130 200 130 C240 130 266 138 272 152 C266 166 240 174 200 174 C160 174 130 166 130 152 Z" fill="#FFFFFF"/>
+  <path d="M132 158 C160 170 240 172 270 156 C262 168 240 174 200 174 C160 174 138 168 132 158 Z" fill="#002A8F"/>
+  <path d="M180 132 L188 112 L220 112 L226 132 Z" fill="#DCE8F8"/>
+  <circle cx="250" cy="148" r="4" fill="#5FD4FF"/>
+</svg>

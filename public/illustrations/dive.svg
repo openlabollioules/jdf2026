@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
+  <defs>
+    <linearGradient id="deep" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F6FD6"/><stop offset="1" stop-color="#061A4A"/></linearGradient>
+    <linearGradient id="beam" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#DFF6FF" stop-opacity="0.75"/><stop offset="1" stop-color="#DFF6FF" stop-opacity="0"/></linearGradient>
+    <clipPath id="port"><circle cx="200" cy="150" r="128"/></clipPath>
+  </defs>
+  <circle cx="200" cy="150" r="140" fill="#C9D6EC"/>
+  <circle cx="200" cy="150" r="128" fill="url(#deep)"/>
+  <g clip-path="url(#port)">
+    <path d="M318 150 L400 96 L400 204 Z" fill="url(#beam)"/>
+    <path d="M110 142 L88 118 L80 124 L98 150 Z" fill="#9FC6F5"/>
+    <path d="M110 158 L88 182 L80 176 L98 150 Z" fill="#1D5BC2"/>
+    <rect x="72" y="138" width="22" height="24" rx="7" fill="#0B1B3F"/>
+    <path d="M100 150 C100 132 144 126 232 126 C280 126 308 136 318 150 C308 164 280 174 232 174 C144 174 100 168 100 150 Z" fill="#FFFFFF"/>
+    <path d="M102 155 C144 168 272 170 316 153 C306 166 280 174 232 174 C144 174 106 168 102 155 Z" fill="#002A8F"/>
+    <path d="M102 153 C144 165 272 167 317 151" fill="none" stroke="#EF002F" stroke-width="4"/>
+    <path d="M280 134 C296 136 310 143 318 150 L280 150 Z" fill="#0B1B3F"/>
+    <circle cx="296" cy="144" r="4.5" fill="#5FD4FF"/>
+    <g fill="none" stroke="#FFFFFF" stroke-opacity="0.7" stroke-width="3"><circle cx="70" cy="112" r="6"/><circle cx="84" cy="86" r="8"/><circle cx="150" cy="66" r="4"/><circle cx="240" cy="58" r="6"/><circle cx="210" cy="226" r="4"/></g>
+  </g>
+  <g fill="#8A9CC0"><circle cx="200" cy="16" r="5"/><circle cx="200" cy="284" r="5"/><circle cx="66" cy="150" r="5"/><circle cx="334" cy="150" r="5"/><circle cx="105" cy="55" r="5"/><circle cx="295" cy="55" r="5"/><circle cx="105" cy="245" r="5"/><circle cx="295" cy="245" r="5"/></g>
+</svg>
