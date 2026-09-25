@@ -190,6 +190,8 @@ Le QR code est généré **localement dans le navigateur** (librairie `qrcode`) 
 | `local` | Images servies par la borne (`/api/files/…`). Mettre `PUBLIC_BASE_URL` sur une adresse joignable par le téléphone (IP locale sur le même Wi-Fi, ou tunnel HTTPS). Sans adresse joignable, pas de QR. | Fichiers expirés supprimés par l'app. |
 | `none` | Pas de QR ; seule l'invitation à photographier l'écran reste. | — |
 
+Vérifier la configuration sans lancer la borne : `npm run check:storage` (dépose une image de test puis la télécharge via l'URL du QR code).
+
 L'invitation « 📸 Tu peux aussi photographier ton drone » est toujours affichée (plan B sans réseau).
 
 ---

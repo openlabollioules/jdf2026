@@ -4,7 +4,7 @@ out/
 .env
 .env.local
 .env.*.local
-storage/
+/storage/
 bench-results/
 *.log
 next-env.d.ts

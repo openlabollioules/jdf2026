@@ -11,7 +11,8 @@
     "lint": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "benchmark": "tsx --conditions=react-server scripts/benchmark.ts"
+    "benchmark": "tsx --conditions=react-server scripts/benchmark.ts",
+    "check:storage": "tsx --conditions=react-server scripts/check-storage.ts"
   },
   "engines": {
     "node": ">=20.9"
