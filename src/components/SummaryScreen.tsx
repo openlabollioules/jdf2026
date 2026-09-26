@@ -6,7 +6,7 @@ import { fill, texts } from "@/config/texts";
 import { sessionChoices, type DroneSession } from "@/lib/session/machine";
 import { PrimaryButton } from "./PrimaryButton";
 
-/** Met en valeur les mots en MAJUSCULES et le pouvoir inventé « … ». */
+/** Met en valeur les mots en MAJUSCULES et les idées libres « … ». */
 function highlight(sentence: string) {
   return sentence.split(/((?<!\p{L})\p{Lu}[\p{Lu}'’-]+(?:\s\p{Lu}[\p{Lu}'’-]+)*(?!\p{L})|«[^»]+»)/u).map((part, i) =>
     i % 2 === 1 ? (
@@ -23,8 +23,10 @@ export function SummaryScreen({ session, onConfirm }: { session: DroneSession; o
   const choices = sessionChoices(session);
   if (!choices) return null;
   const d = describeChoices(choices);
-  const template = d.isCustomPower ? texts.summary.sentenceCustom : texts.summary.sentence;
-  const sentence = fill(template, { animal: d.animal.summary, movement: d.movement.summary, power: d.power.summary });
+  const template = d.hasCustomChoice ? texts.summary.sentenceCustom : texts.summary.sentence;
+  const sentence = fill(template, d.hasCustomChoice
+    ? { animal: d.animal.label, movement: d.movement.label, power: d.power.label }
+    : { animal: d.animal.summary, movement: d.movement.summary, power: d.power.summary });
 
   return (
     <section className="summary">

@@ -58,6 +58,40 @@ describe("generateDrone (Replicate simulé)", () => {
     expect((create.init!.headers as Record<string, string>).Authorization).toBe("Bearer r8_test");
   });
 
+  it("reformule les idées libres une seule fois via OpenRouter avant Replicate", async () => {
+    process.env.OPENROUTER_API_KEY = "sk-or-test";
+    process.env.OPENROUTER_MODEL = "deepseek/deepseek-v4.1-flash";
+    const calls: { url: string; init?: RequestInit }[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (url: string, init?: RequestInit) => {
+      calls.push({ url, init });
+      if (url.includes("openrouter.ai")) return json({ choices: [{ message: { content: JSON.stringify({
+        animal: "an octopus with glowing tentacle-inspired fins",
+        movement: "gliding beneath arctic ice",
+        power: "creating giant harmless luminous bubbles",
+      }) } }] });
+      if (url.endsWith("/predictions")) return json({ id: "p2", status: "succeeded", output: "https://cdn.test/out.jpg" }, 201);
+      if (url === "https://cdn.test/out.jpg") return new Response(JPEG, { headers: { "content-type": "image/jpeg" } });
+      return new Response("?", { status: 404 });
+    }));
+    await generateDrone({
+      animal: "custom", customAnimal: "pieuvre lumineuse",
+      movement: "custom", customMovement: "sous la banquise",
+      power: "custom", customPower: "bulles géantes",
+      sketchImage: sketch,
+    });
+    const openrouter = calls.filter((c) => c.url.includes("openrouter.ai"));
+    expect(openrouter).toHaveLength(1);
+    expect((openrouter[0]!.init!.headers as Record<string, string>).Authorization).toBe("Bearer sk-or-test");
+    const request = JSON.parse(String(openrouter[0]!.init!.body));
+    expect(request.model).toBe("deepseek/deepseek-v4.1-flash");
+    expect(request.messages[1].content).toContain("pieuvre lumineuse");
+    const replicate = calls.find((c) => c.url.endsWith("/predictions"))!;
+    const prompt = JSON.parse(String(replicate.init!.body)).input.prompt as string;
+    expect(prompt).toContain("octopus with glowing tentacle-inspired fins");
+    expect(prompt).toContain("gliding beneath arctic ice");
+    expect(prompt).toContain("giant harmless luminous bubbles");
+  });
+
   it("n'insiste pas indéfiniment : échec signalé comme réessayable après les tentatives", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => json({ detail: "down" }, 503)));
     await expect(generateDrone({ ...choices, sketchImage: sketch })).rejects.toMatchObject({ retryable: true });

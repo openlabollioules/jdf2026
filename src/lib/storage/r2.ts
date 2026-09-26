@@ -61,6 +61,7 @@ export async function uploadToR2(cfg: R2Config, key: string, bytes: Buffer, mime
     body: new Uint8Array(bytes),
     headers: {
       "Content-Type": mime,
+      "Content-Length": String(bytes.length),
       "Content-Disposition": contentDisposition(ext),
       "Cache-Control": "public, max-age=86400",
     },

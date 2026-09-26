@@ -1,9 +1,9 @@
 # 🚀 Crée ton drone du futur !
 
-Borne interactive pour la **Journée des Familles 2026 — Naval Group**. L'enfant choisit un animal marin, le milieu où opère son drone (air, surface, profondeurs) et un super pouvoir (ou l'invente lui-même), dessine son drone au feutre sur un tableau Velleda, le montre à la webcam… et pendant qu'un sous-marin d'exploration part au centre d'essais sous-marin, une IA (Replicate) transforme le croquis en illustration. Le drone est révélé avec le titre **MON SUPER DRONE**, un QR code de téléchargement et un envoi e-mail optionnel.
+Borne interactive pour la **Journée des Familles 2026 — Naval Group**. L'enfant choisit ou invente un animal, le milieu où opère son drone et un super pouvoir, dessine son drone au feutre sur un tableau Velleda, le montre à la webcam… et pendant qu'un sous-marin d'exploration part au centre d'essais sous-marin, une IA (Replicate) transforme le croquis en illustration. Le drone est révélé avec le titre **MON SUPER DRONE**, un QR code de téléchargement et un envoi e-mail optionnel.
 
 ```
-Accueil → Animal marin → Milieu → Pouvoir (liste ou champ libre) → Résumé → Dessin Velleda → Photo webcam
+Accueil → Animal → Milieu → Pouvoir (liste ou idée libre à chaque étape) → Résumé → Dessin Velleda → Capture webcam
   → mini-aventure sous-marine (pendant la génération) → Révélation → QR / e-mail → enfant suivant
 ```
 
@@ -25,7 +25,7 @@ Pour activer la vraie génération, renseigner dans `.env.local` :
 
 ```env
 REPLICATE_API_TOKEN=r8_...
-REPLICATE_MODEL=prunaai/p-image-edit
+REPLICATE_MODEL=google/nano-banana-2-lite
 ```
 
 ### Lancer la borne (jour de l'événement)
@@ -52,12 +52,12 @@ google-chrome --kiosk --app=http://localhost:3000 \
 ## 2. Tests
 
 ```bash
-npm test            # tests unitaires (vitest) — 41 tests
+npm test            # tests unitaires (vitest)
 npm run lint        # vérification TypeScript
 npm run build       # build de production
 ```
 
-Fonctions critiques couvertes : pouvoir inventé (nettoyage, caractères autorisés, mots refusés, intégration au prompt), machine d'état de session (double clic, retry, reset, e-mail, liens obsolètes), machine d'état de la scène (résultat rapide / lent / en retard), prompt builder (toutes les combinaisons), adaptateurs de modèles, pipeline Replicate simulé (retry sur 5xx, pas de retry sur 4xx, arrêt après N essais), validation d'image (signature binaire), limiteur de débit, validation e-mail, géométrie de capture.
+Fonctions critiques couvertes : idées libres (nettoyage, caractères autorisés, mots refusés, reformulation dans le prompt), machine d'état de session (double clic, retry, reset, e-mail, liens obsolètes), machine d'état de la scène (résultat rapide / lent / en retard), prompt builder (toutes les combinaisons), adaptateurs de modèles, pipeline Replicate simulé (retry sur 5xx, pas de retry sur 4xx, arrêt après N essais), validation d'image (signature binaire), limiteur de débit, validation e-mail, géométrie de capture.
 
 ---
 
@@ -68,6 +68,7 @@ Tout est dans `.env.local` (voir `.env.example`, commenté). Les valeurs sont re
 | Besoin | Variables |
 |---|---|
 | Modèle IA | `REPLICATE_MODEL`, `REPLICATE_ASPECT_RATIO`, `REPLICATE_EXTRA_INPUT` |
+| Reformulation des idées libres | `OPENROUTER_API_KEY`, `OPENROUTER_MODEL` |
 | Durées | `SCENE_MIN_DURATION_MS` (6,5 s), `GENERATION_TIMEOUT_MS` (60 s), `RESULT_IDLE_TIMEOUT_MS` (2 min) |
 | Caméra | `CAMERA_MIRROR`, `CAMERA_ROTATION`, `CAMERA_COUNTDOWN`, `CAMERA_DEVICE_LABEL`, `CAPTURE_ASPECT` |
 | QR code | `STORAGE_PROVIDER`, `SHARE_TTL_HOURS`, `PUBLIC_BASE_URL` + identifiants du fournisseur |
@@ -80,7 +81,8 @@ Tout est dans `.env.local` (voir `.env.example`, commenté). Les valeurs sont re
 |---|---|
 | `src/config/animals.ts` | animaux marins : requin, dauphin, baleine, tortue marine (libellé, illustration, couleur, **fragment de prompt**) |
 | `src/config/movements.ts` | milieux : voler au-dessus des mers, naviguer sur les vagues, plonger dans les profondeurs |
-| `src/config/powers.ts` | pouvoirs proposés + carte « Invente ton pouvoir » (champ libre, 3 à 60 caractères) |
+| `src/config/powers.ts` | pouvoirs proposés + carte « Invente ton pouvoir » |
+| `src/config/choices.ts` | cartes « idée libre » des trois étapes, validation et résumé (3 à 60 caractères) |
 | `src/config/moderation.ts` | liste de mots refusés dans le champ libre (à compléter) |
 | `src/config/branding.ts` | logo, emblème, nom de l'événement, couleurs de la charte |
 | `src/config/texts.ts` | tous les textes : questions, messages du sous-marin, erreurs, e-mail… |
@@ -93,9 +95,9 @@ Tout est dans `.env.local` (voir `.env.example`, commenté). Les valeurs sont re
 - **Nom de l'événement** : « Journée des Familles 2026 » par défaut (`branding.ts`), modifiable par `EVENT_NAME`. L'année finale est mise en valeur automatiquement.
 - Charte : bleu marine `#002A8F`, rouge `#EF002F`, blanc, fonds « grands fonds » avec grille de plan technique, police Montserrat (embarquée, fonctionne hors ligne).
 
-### Pouvoir inventé (champ libre)
+### Idées libres
 
-La 6ᵉ carte « Invente ton pouvoir » ouvre un clavier tactile AZERTY (accents, espace). Le texte est validé côté client **et** serveur : 3 à 60 caractères, lettres/chiffres/ponctuation simple, refus des mots de `moderation.ts` (comparaison mot à mot, sans accents). Dans le prompt, il est cité entre guillemets et recadré : « interprète-le comme un effet magique spectaculaire, bienveillant, non violent, adapté aux enfants ». Le texte libre n'est jamais écrit dans les journaux. Le filtre reste volontairement simple : l'animateur garde la main (menu ⚙ → étape précédente / recommencer).
+Une carte « Imagine… » à chaque étape ouvre le clavier tactile AZERTY. Le texte est validé côté client **et** serveur : 3 à 60 caractères, lettres/chiffres/ponctuation simple, refus des mots de `moderation.ts` (comparaison mot à mot, sans accents). Les idées libres sont transmises ensemble à OpenRouter lors de la génération pour obtenir des descriptions visuelles anglaises. Elles ne sont jamais écrites dans les journaux de l'application. Si OpenRouter manque ou échoue, le prompt utilise les idées d'origine, citées et recadrées pour rester adaptées aux enfants. Le filtre reste volontairement simple : l'animateur garde la main (menu ⚙ → étape précédente / recommencer).
 
 Ajouter un animal = ajouter une entrée dans `animals.ts` (+ une illustration, sinon l'emoji est affiché). Validation serveur, prompt, résumé et sous-titre suivent automatiquement.
 
@@ -154,15 +156,15 @@ scripts/benchmark.ts
 `src/lib/generation/prompts.ts` — construit côté serveur, jamais visible à l'écran.
 
 - Principe : **le dessin de l'enfant reste la source de la forme.** Le prompt demande une *transformation* du croquis (silhouette, proportions, idées créatives conservées ; fond du tableau, reflets et mains ignorés).
-- Les choix sont injectés sous forme **sémantique** via le champ `prompt` de la config (ex. requin → *« inspired by the speed, power and streamlined hydrodynamic shapes of a shark… »*), jamais la valeur technique. Un pouvoir inventé est cité et recadré (voir §3).
-- Style commun « drone naval futuriste » (rendu 3D stylisé haut de gamme, blanc / bleu marine / rouge signal, détails d'ingénierie navale, adapté aux familles, **sans armes**) pour que toutes les créations appartiennent au même univers ; **no text, no letters, no logo, no flag, no watermark** (le logo est ajouté par l'application, pas par l'IA).
+- Les choix proposés sont injectés sous forme **sémantique** via le champ `prompt` de la config (ex. requin → *« inspired by the speed, power and streamlined hydrodynamic shapes of a shark… »*). Chaque étape propose aussi une idée libre (animal, milieu, pouvoir), validée côté client et serveur. Si `OPENROUTER_API_KEY` est défini, les idées libres sont reformulées ensemble par `OPENROUTER_MODEL` en descriptions visuelles anglaises avant l'appel au modèle d'image ; la clé reste côté serveur. En cas d'indisponibilité d'OpenRouter, les idées d'origine sont utilisées dans un prompt cadré pour les enfants.
+- Style commun « drone naval futuriste » (rendu 3D stylisé, détails d'ingénierie navale, adapté aux familles, **sans armes**) ; les matériaux et la palette varient selon le dessin et les choix de l'enfant. Le blanc, le bleu marine et le rouge signal restent des accents possibles. **No text, no letters, no logo, no flag, no watermark** (le logo est ajouté par l'application, pas par l'IA).
 - Deux variantes : `instruction` (Kontext, Nano Banana) et `reference` (P-Image-Edit, qui désigne l'entrée par « image 1 »), choisies par l'adaptateur du modèle.
 
 ---
 
 ## 6. Choisir le modèle : benchmark (§35)
 
-Modèles préconfigurés : `prunaai/p-image-edit` (défaut, < 1–2 s annoncées), `black-forest-labs/flux-kontext-pro`, `prunaai/flux-kontext-dev`, `google/nano-banana`. Un autre modèle d'édition fonctionne via l'adaptateur générique (`REPLICATE_IMAGE_FIELD`).
+Modèles préconfigurés : `google/nano-banana-2-lite` (défaut, essai plus créatif), `prunaai/p-image-edit` (très rapide), `black-forest-labs/flux-kontext-pro`, `prunaai/flux-kontext-dev`, `google/nano-banana`. Un autre modèle d'édition fonctionne via l'adaptateur générique (`REPLICATE_IMAGE_FIELD`).
 
 1. Photographier ~10 vrais croquis Velleda (simples → détaillés) dans `bench-sketches/`.
 2. Lancer :
@@ -188,19 +190,21 @@ Le QR code est généré **localement dans le navigateur** (librairie `qrcode`) 
 | `supabase` | Bucket **privé** `drones` + clé `service_role`. URL signée expirant après `SHARE_TTL_HOURS`. | Nettoyage automatique par l'app (au plus 1×/h) des dossiers journaliers expirés. |
 | `vercel-blob` | `BLOB_READ_WRITE_TOKEN`. | Nettoyage automatique par l'app (1×/h). |
 | `local` | Images servies par la borne (`/api/files/…`). Mettre `PUBLIC_BASE_URL` sur une adresse joignable par le téléphone (IP locale sur le même Wi-Fi, ou tunnel HTTPS). Sans adresse joignable, pas de QR. | Fichiers expirés supprimés par l'app. |
-| `none` | Pas de QR ; seule l'invitation à photographier l'écran reste. | — |
+| `none` | Pas de QR code. | — |
 
 Vérifier la configuration sans lancer la borne : `npm run check:storage` (dépose une image de test puis la télécharge via l'URL du QR code).
 
-L'invitation « 📸 Tu peux aussi photographier ton drone » est toujours affichée (plan B sans réseau).
+Le QR code s'affiche dès que le stockage renvoie un lien de téléchargement valide.
 
 ---
 
 ## 8. E-mail (option secondaire)
 
-Bouton discret sur l'écran résultat, uniquement si `EMAIL_PROVIDER` ≠ `none`. Saisie via un clavier AZERTY tactile intégré (raccourcis `@gmail.com`, `.fr`…), validation client + serveur, envoi par le backend avec l'image finale en pièce jointe. L'adresse n'est **ni stockée ni journalisée**. En cas d'échec : « Ton drone est bien créé ! L'envoi n'a pas fonctionné. On peut réessayer. » (l'image n'est pas perdue).
+Bouton discret sur l'écran résultat, affiché lorsque le fournisseur e-mail, sa clé et l'expéditeur sont configurés. Saisie via un clavier AZERTY tactile intégré (raccourcis `@gmail.com`, `.fr`…), validation client + serveur, envoi par le backend avec l'image finale en pièce jointe. L'adresse n'est **ni stockée ni journalisée**. En cas d'échec : « Ton drone est bien créé ! L'envoi n'a pas fonctionné. On peut réessayer. » (l'image n'est pas perdue).
 
 Fournisseurs : `resend`, `sendgrid`, `smtp` (`SMTP_URL`), `log` (simulation pour les tests).
+
+Pour activer Resend : vérifier un domaine d'envoi dans Resend, créer une clé API autorisée à envoyer des e-mails, puis renseigner `EMAIL_PROVIDER=resend`, `EMAIL_FROM=Drone du futur <contact@domaine-verifie.fr>` et `RESEND_API_KEY` dans `.env`. Redémarrer l'app et faire un essai vers sa propre adresse avec la pièce jointe. Tant que la clé ou l'expéditeur manque, le bouton e-mail reste masqué.
 
 ---
 

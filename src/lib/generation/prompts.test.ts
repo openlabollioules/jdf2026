@@ -40,6 +40,22 @@ describe("parseChoices", () => {
     expect(parseChoices({ animal: "shark", movement: "sail" })).toBeNull();
     expect(parseChoices({ animal: "__proto__", movement: "sail", power: "sonar" })).toBeNull();
   });
+
+  it("accepte une idée libre à chaque étape et refuse les textes invalides", () => {
+    const c = parseChoices({
+      animal: "custom", customAnimal: "  pieuvre   lumineuse ",
+      movement: "custom", customMovement: " sous la banquise ",
+      power: "custom", customPower: " bulles géantes ",
+    });
+    expect(c).toEqual({
+      animal: "custom", customAnimal: "pieuvre lumineuse",
+      movement: "custom", customMovement: "sous la banquise",
+      power: "custom", customPower: "bulles géantes",
+    });
+    expect(buildDronePrompt(c!)).toContain('"pieuvre lumineuse"');
+    expect(parseChoices({ animal: "custom", movement: "sail", power: "sonar" })).toBeNull();
+    expect(parseChoices({ animal: "shark", movement: "custom", customMovement: "tuer les poissons", power: "sonar" })).toBeNull();
+  });
 });
 
 describe("pouvoir inventé (champ libre)", () => {
@@ -79,6 +95,7 @@ describe("model adapters", () => {
     const args = { prompt: "p", imageUri: "data:x", aspectRatio: "match_input_image" };
     expect(resolveModelAdapter("prunaai/p-image-edit", generic).buildInput(args)).toMatchObject({ images: ["data:x"] });
     expect(resolveModelAdapter("black-forest-labs/flux-kontext-pro", generic).buildInput(args)).toMatchObject({ input_image: "data:x" });
+    expect(resolveModelAdapter("google/nano-banana-2-lite", generic).buildInput(args)).toMatchObject({ image_input: ["data:x"] });
     expect(resolveModelAdapter("google/nano-banana", generic).buildInput(args)).toMatchObject({ image_input: ["data:x"] });
   });
 

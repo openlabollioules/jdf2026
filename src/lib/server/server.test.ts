@@ -4,6 +4,7 @@ import { RateLimiter } from "./rateLimit";
 import { percentile } from "./metrics";
 import { randomId, ID_RE } from "./ids";
 import { isValidEmail } from "@/lib/email";
+import { getServerConfig, isEmailConfigured } from "./env";
 import { fitAspect, outputSize, rotatedSize } from "@/lib/client/geometry";
 
 const JPEG = Buffer.from([0xff, 0xd8, 0xff, 0xe0, 0, 0x10, 0x4a, 0x46]);
@@ -53,6 +54,12 @@ describe("utilitaires", () => {
     for (const bad of ["", "parent", "a@b", "a b@c.fr", "a@@b.fr", "a..b@c.fr", "<script>@x.fr", 42]) {
       expect(isValidEmail(bad)).toBe(false);
     }
+  });
+  it("n'active Resend qu'avec une clé et un expéditeur configuré", () => {
+    const email = getServerConfig().email;
+    expect(isEmailConfigured({ ...email, provider: "resend", resendApiKey: "" })).toBe(false);
+    expect(isEmailConfigured({ ...email, provider: "resend", resendApiKey: "re_test", from: "Drone <drone@example.com>" })).toBe(false);
+    expect(isEmailConfigured({ ...email, provider: "resend", resendApiKey: "re_test", from: "Drone <drone@domaine.fr>" })).toBe(true);
   });
 });
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { animals, movements } from "@/config/choices";
+import { animals, customAnimalCard, customMovementCard, customPowerCard, movements, powers } from "@/config/choices";
 import { branding } from "@/config/branding";
 import { texts } from "@/config/texts";
 import type { PublicConfig } from "@/lib/publicConfig";
@@ -14,7 +14,7 @@ import { useGenerationController } from "@/lib/client/useGenerationController";
 import { useShareController } from "@/lib/client/useShareController";
 import { useIdleTimer } from "@/lib/client/useIdleTimer";
 import { WelcomeScreen } from "./WelcomeScreen";
-import { ChoiceScreen } from "./ChoiceScreen";
+import { CustomChoiceScreen } from "./CustomChoiceScreen";
 import { SummaryScreen } from "./SummaryScreen";
 import { DrawingInstructions } from "./DrawingInstructions";
 import { CameraCapture } from "./CameraCapture";
@@ -27,7 +27,6 @@ import { MuteButton } from "./MuteButton";
 import { DevPanel } from "./DevPanel";
 import { Backdrop } from "./Backdrop";
 import { BrandHeader } from "./BrandHeader";
-import { PowerScreen } from "./PowerScreen";
 
 /** Délai pendant lequel un nouvel écran ignore les appuis (anti double-tap « traversant »). */
 const INPUT_LOCK_MS = 450;
@@ -101,11 +100,11 @@ export function Kiosk({ config }: { config: PublicConfig }) {
           />
         );
       case "animal":
-        return <ChoiceScreen question={texts.questions.animal} options={animals} onChoose={(id) => act({ type: "CHOOSE_ANIMAL", animal: id })} />;
+        return <CustomChoiceScreen kind="animal" options={animals} customCard={customAnimalCard} initialCustom={state.customAnimal} onChoose={(animal, customAnimal) => act({ type: "CHOOSE_ANIMAL", animal, customAnimal })} />;
       case "movement":
-        return <ChoiceScreen question={texts.questions.movement} options={movements} onChoose={(id) => act({ type: "CHOOSE_MOVEMENT", movement: id })} />;
+        return <CustomChoiceScreen kind="movement" options={movements} customCard={customMovementCard} initialCustom={state.customMovement} onChoose={(movement, customMovement) => act({ type: "CHOOSE_MOVEMENT", movement, customMovement })} />;
       case "power":
-        return <PowerScreen initialCustom={state.customPower} onChoose={(power, customPower) => act({ type: "CHOOSE_POWER", power, customPower })} />;
+        return <CustomChoiceScreen kind="power" options={powers} customCard={customPowerCard} initialCustom={state.customPower} onChoose={(power, customPower) => act({ type: "CHOOSE_POWER", power, customPower })} />;
       case "summary":
         return <SummaryScreen session={state} onConfirm={() => act({ type: "CONFIRM_SUMMARY" })} />;
       case "drawing":

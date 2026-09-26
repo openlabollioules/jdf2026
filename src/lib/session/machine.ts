@@ -1,4 +1,4 @@
-import { CUSTOM_POWER_ID, type Animal, type DroneChoices, type Movement, type PowerChoice } from "@/config/choices";
+import { CUSTOM_CHOICE_ID, CUSTOM_POWER_ID, type Animal, type AnimalChoice, type DroneChoices, type Movement, type MovementChoice, type PowerChoice } from "@/config/choices";
 
 /**
  * Machine d'état globale de la borne (§29, §43).
@@ -30,8 +30,10 @@ export interface DroneSession {
   status: SessionStatus;
   /** Change à chaque nouvelle session : sert aussi à invalider les tâches asynchrones. */
   sessionId: string;
-  animal?: Animal;
-  movement?: Movement;
+  animal?: AnimalChoice;
+  customAnimal?: string;
+  movement?: MovementChoice;
+  customMovement?: string;
   power?: PowerChoice;
   /** Pouvoir inventé par l'enfant (si power === "custom"). */
   customPower?: string;
@@ -54,8 +56,8 @@ export type SessionAction =
   | { type: "START"; sessionId: string }
   | { type: "RESET"; sessionId: string }
   | { type: "BACK" }
-  | { type: "CHOOSE_ANIMAL"; animal: Animal }
-  | { type: "CHOOSE_MOVEMENT"; movement: Movement }
+  | { type: "CHOOSE_ANIMAL"; animal: AnimalChoice; customAnimal?: string }
+  | { type: "CHOOSE_MOVEMENT"; movement: MovementChoice; customMovement?: string }
   | { type: "CHOOSE_POWER"; power: PowerChoice; customPower?: string }
   | { type: "CONFIRM_SUMMARY" }
   | { type: "OPEN_CAMERA" }
@@ -134,10 +136,12 @@ export function sessionReducer(s: DroneSession, a: SessionAction): DroneSession 
     }
 
     case "CHOOSE_ANIMAL":
-      return s.status === "animal" ? { ...s, animal: a.animal, status: "movement" } : s;
+      if (s.status !== "animal" || a.animal === CUSTOM_CHOICE_ID && !a.customAnimal) return s;
+      return { ...s, animal: a.animal, customAnimal: a.animal === CUSTOM_CHOICE_ID ? a.customAnimal : undefined, status: "movement" };
 
     case "CHOOSE_MOVEMENT":
-      return s.status === "movement" ? { ...s, movement: a.movement, status: "power" } : s;
+      if (s.status !== "movement" || a.movement === CUSTOM_CHOICE_ID && !a.customMovement) return s;
+      return { ...s, movement: a.movement, customMovement: a.movement === CUSTOM_CHOICE_ID ? a.customMovement : undefined, status: "power" };
 
     case "CHOOSE_POWER":
       if (s.status !== "power") return s;
@@ -232,8 +236,14 @@ export function progressIndex(status: SessionStatus): number {
 }
 
 /** Les choix complets de la session, ou null s'il en manque. */
-export function sessionChoices(s: Pick<DroneSession, "animal" | "movement" | "power" | "customPower">): DroneChoices | null {
+export function sessionChoices(s: Pick<DroneSession, "animal" | "customAnimal" | "movement" | "customMovement" | "power" | "customPower">): DroneChoices | null {
   if (!s.animal || !s.movement || !s.power) return null;
+  if (s.animal === CUSTOM_CHOICE_ID && !s.customAnimal) return null;
+  if (s.movement === CUSTOM_CHOICE_ID && !s.customMovement) return null;
   if (s.power === CUSTOM_POWER_ID && !s.customPower) return null;
-  return { animal: s.animal, movement: s.movement, power: s.power, customPower: s.power === CUSTOM_POWER_ID ? s.customPower : undefined };
+  return {
+    animal: s.animal, customAnimal: s.animal === CUSTOM_CHOICE_ID ? s.customAnimal : undefined,
+    movement: s.movement, customMovement: s.movement === CUSTOM_CHOICE_ID ? s.customMovement : undefined,
+    power: s.power, customPower: s.power === CUSTOM_POWER_ID ? s.customPower : undefined,
+  };
 }

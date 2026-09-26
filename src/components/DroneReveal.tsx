@@ -78,7 +78,6 @@ export function DroneReveal({ session, config, onAgain, onEmail }: Props) {
             )}
           </div>
         )}
-        <p className="photo-hint">{texts.result.photoFallback}</p>
         {config.emailEnabled && (
           <PrimaryButton variant="ghost" size="md" onPress={onEmail}>
             {texts.result.email}

@@ -45,13 +45,17 @@ export function getServerConfig() {
     },
     replicate: {
       token: replicateToken,
-      model: str("REPLICATE_MODEL", "prunaai/p-image-edit"),
+      model: str("REPLICATE_MODEL", "google/nano-banana-2-lite"),
       aspectRatio: str("REPLICATE_ASPECT_RATIO", "match_input_image"),
       /** JSON optionnel fusionné dans l'input envoyé au modèle (réglages avancés). */
       extraInput: str("REPLICATE_EXTRA_INPUT"),
       /** Pour un modèle non préconfiguré : nom du champ image et format tableau ou non. */
       imageField: str("REPLICATE_IMAGE_FIELD", "input_image"),
       imageFieldIsArray: bool("REPLICATE_IMAGE_FIELD_IS_ARRAY", false),
+    },
+    openrouter: {
+      apiKey: str("OPENROUTER_API_KEY"),
+      model: str("OPENROUTER_MODEL", "google/gemini-3.1-flash-lite"),
     },
     storage: {
       provider: str("STORAGE_PROVIDER", "local") as "local" | "r2" | "supabase" | "vercel-blob" | "none",
@@ -106,6 +110,24 @@ export function getServerConfig() {
 
 export type ServerConfig = ReturnType<typeof getServerConfig>;
 
+/** N'affiche l'envoi que lorsque le fournisseur dispose d'un expéditeur et de ses identifiants. */
+export function isEmailConfigured(email: ServerConfig["email"]): boolean {
+  if (email.provider === "none") return false;
+  if (email.provider === "log") return true;
+  const address = email.from.match(/<([^<>]+)>\s*$/)?.[1]?.trim() ?? email.from.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(address) || address.toLowerCase().endsWith("@example.com")) return false;
+  switch (email.provider) {
+    case "resend":
+      return !!email.resendApiKey;
+    case "sendgrid":
+      return !!email.sendgridApiKey;
+    case "smtp":
+      return !!email.smtpUrl;
+    default:
+      return false;
+  }
+}
+
 function parseAspect(value: string): number {
   const m = /^(\d+(?:\.\d+)?):(\d+(?:\.\d+)?)$/.exec(value);
   if (!m) return 4 / 3;
@@ -121,7 +143,7 @@ export function getPublicConfig(): PublicConfig {
     generationTimeoutMs: c.generation.timeoutMs,
     resultIdleMs: c.ui.resultIdleMs,
     questionIdleMs: c.ui.questionIdleMs,
-    emailEnabled: c.email.provider !== "none",
+    emailEnabled: isEmailConfigured(c.email),
     shareEnabled: c.storage.provider !== "none",
     shareTtlHours: c.storage.ttlHours,
     camera: {

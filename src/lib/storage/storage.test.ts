@@ -1,10 +1,10 @@
-import { afterAll, describe, expect, it } from "vitest";
+import { afterAll, describe, expect, it, vi } from "vitest";
 import { mkdtemp, rm, utimes } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { shareKey } from "./keys";
 import { cleanupLocalFiles, readLocalFile, writeLocalFile } from "./local";
-import { presignR2Get, r2ObjectUrl } from "./r2";
+import { presignR2Get, r2ObjectUrl, uploadToR2 } from "./r2";
 
 const R2 = {
   accountId: "acc123",
@@ -30,6 +30,19 @@ describe("R2", () => {
     expect(url.searchParams.get("X-Amz-Expires")).toBe(String(7 * 24 * 3600));
     expect(url.searchParams.get("X-Amz-Credential")).toMatch(/^AKIDEXAMPLE\/\d{8}\/auto\/s3\/aws4_request$/);
     expect(url.searchParams.get("X-Amz-Signature")).toMatch(/^[0-9a-f]{64}$/);
+  });
+  it("transmet la taille du fichier à R2", async () => {
+    const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(new Response(null, { status: 200 }));
+    try {
+      const bytes = Buffer.from("image-test");
+      const url = await uploadToR2({ ...R2, publicUrl: "https://cdn.example.com" }, "drones/a.jpg", bytes, "image/jpeg", 48);
+      expect(url).toBe("https://cdn.example.com/drones/a.jpg");
+      const request = fetch.mock.calls[0]?.[0];
+      expect(request).toBeInstanceOf(Request);
+      expect((request as Request).headers.get("content-length")).toBe(String(bytes.length));
+    } finally {
+      fetch.mockRestore();
+    }
   });
 });
 

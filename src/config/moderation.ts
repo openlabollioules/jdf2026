@@ -1,5 +1,5 @@
 /**
- * Filtre volontairement simple pour le pouvoir inventé (champ libre) :
+ * Filtre volontairement simple pour les idées libres :
  * refuse les mots grossiers, violents ou haineux les plus courants.
  * Liste à compléter selon l'événement. Les mots sont comparés sans accents ni majuscules,
  * mot par mot (pas de faux positif sur « contrôle » pour « con », par exemple).

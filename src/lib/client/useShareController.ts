@@ -9,7 +9,7 @@ import { sessionChoices, type DroneSession, type SessionAction } from "@/lib/ses
 import { shareGeneration } from "./api";
 import { composeFinalImage } from "./compose";
 
-export function droneTagline(s: Pick<DroneSession, "animal" | "movement" | "power" | "customPower">): string {
+export function droneTagline(s: Pick<DroneSession, "animal" | "customAnimal" | "movement" | "customMovement" | "power" | "customPower">): string {
   const choices = sessionChoices(s);
   if (!choices) return "";
   const d = describeChoices(choices);

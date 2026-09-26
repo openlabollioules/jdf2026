@@ -2,6 +2,7 @@ import "server-only";
 import type { DroneChoices } from "@/config/choices";
 import { getServerConfig } from "@/lib/server/env";
 import { buildDronePrompt } from "./prompts";
+import { rephraseCustomChoices } from "./rephrase";
 import { modelBaseId, resolveModelAdapter } from "./models";
 import { cancelPrediction, createPrediction, extractOutputUrl, getPrediction, isTerminal, ReplicateError, type Prediction } from "./replicate";
 import { generateMockDrone } from "./mock";
@@ -97,7 +98,8 @@ async function generateWithReplicate(input: GenerateDroneInput, signal: AbortSig
 
   const model = input.model || cfg.replicate.model;
   const adapter = resolveModelAdapter(model, cfg.replicate);
-  const prompt = buildDronePrompt(input, adapter.promptVariant);
+  const customPrompts = await rephraseCustomChoices(input, cfg.openrouter, signal);
+  const prompt = buildDronePrompt(input, adapter.promptVariant, customPrompts);
   // Data URI : recommandé par Replicate pour les fichiers < 1 Mo, ce qui est le cas
   // de nos captures redimensionnées (~150–400 Ko). Aucun stockage intermédiaire.
   const imageUri = `data:${input.sketchImage.mime};base64,${input.sketchImage.bytes.toString("base64")}`;

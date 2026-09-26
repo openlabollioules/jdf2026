@@ -15,7 +15,9 @@ const REQUEST_ID_RE = /^[A-Za-z0-9-]{8,64}$/;
 interface GenerateBody {
   image?: unknown;
   animal?: unknown;
+  customAnimal?: unknown;
   movement?: unknown;
+  customMovement?: unknown;
   power?: unknown;
   customPower?: unknown;
   requestId?: unknown;
@@ -28,7 +30,7 @@ export async function POST(req: Request) {
   const cfg = getServerConfig();
   const limiter = (g.__droneGenLimiter ??= new RateLimiter(cfg.limits.generatePerMinute, 60_000));
 
-  const body = await readJsonBody<GenerateBody>(req, Math.ceil(cfg.limits.maxUploadBytes * 1.4) + 8192);
+  const body = await readJsonBody<GenerateBody>(req, Math.ceil(cfg.limits.maxUploadBytes * 1.4) + 9000);
   if (!body) return json({ error: "invalid_body" }, 400);
 
   // Idempotence : un double envoi de la même soumission renvoie la même génération.

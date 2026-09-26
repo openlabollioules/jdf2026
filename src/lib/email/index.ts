@@ -1,11 +1,12 @@
 import "server-only";
 import { texts } from "@/config/texts";
-import { getServerConfig } from "@/lib/server/env";
+import { getServerConfig, isEmailConfigured } from "@/lib/server/env";
 import { createLogProvider, createResendProvider, createSendgridProvider, createSmtpProvider } from "./providers";
 import type { EmailProvider } from "./types";
 
 export function getEmailProvider(): EmailProvider | null {
   const { email } = getServerConfig();
+  if (!isEmailConfigured(email)) return null;
   switch (email.provider) {
     case "resend":
       return createResendProvider(email.resendApiKey);

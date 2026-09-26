@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { createSession, sessionReducer, type DroneSession, type SessionAction } from "./machine";
+import { createSession, sessionChoices, sessionReducer, type DroneSession, type SessionAction } from "./machine";
 
 const run = (actions: SessionAction[], from: DroneSession = createSession("s1")) => actions.reduce(sessionReducer, from);
 
@@ -18,6 +18,17 @@ describe("sessionReducer", () => {
     const s = run(toPreview);
     expect(s.status).toBe("preview");
     expect(s).toMatchObject({ animal: "shark", movement: "dive", power: "sonar", sessionId: "s2" });
+  });
+
+  it("conserve les trois idées libres jusqu'à la génération", () => {
+    const s = run([
+      { type: "START", sessionId: "s2" },
+      { type: "CHOOSE_ANIMAL", animal: "custom", customAnimal: "pieuvre lumineuse" },
+      { type: "CHOOSE_MOVEMENT", movement: "custom", customMovement: "sous la banquise" },
+      { type: "CHOOSE_POWER", power: "custom", customPower: "bulles géantes" },
+    ]);
+    expect(s.status).toBe("summary");
+    expect(sessionChoices(s)).toMatchObject({ customAnimal: "pieuvre lumineuse", customMovement: "sous la banquise", customPower: "bulles géantes" });
   });
 
   it("ignore un double clic sur une carte (le 2e choix arrive sur l'écran suivant)", () => {

@@ -61,6 +61,17 @@ export const MODEL_ADAPTERS: ModelAdapter[] = [
     }),
   },
   {
+    id: "google/nano-banana-2-lite",
+    label: "Nano Banana 2 Lite",
+    promptVariant: "instruction",
+    buildInput: ({ prompt, imageUri, aspectRatio }) => ({
+      prompt,
+      image_input: [imageUri],
+      aspect_ratio: aspectRatio,
+      output_format: "jpg",
+    }),
+  },
+  {
     id: "google/nano-banana",
     label: "Nano Banana",
     promptVariant: "instruction",

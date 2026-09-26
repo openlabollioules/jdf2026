@@ -13,11 +13,13 @@ export const texts = {
     movement: "Où ton drone va-t-il opérer ?",
     power: "Quel est son super pouvoir ?",
   },
-  customPower: {
-    title: "Invente le super pouvoir de ton drone",
-    placeholder: "ex. : faire des bulles géantes",
+  customChoice: {
+    animal: { title: "Imagine l'animal de ton drone", placeholder: "ex. : une pieuvre lumineuse" },
+    movement: { title: "Imagine où ira ton drone", placeholder: "ex. : sous la banquise" },
+    power: { title: "Invente le super pouvoir de ton drone", placeholder: "ex. : faire des bulles géantes" },
     cta: "Valider",
     cancel: "Retour",
+    privacy: "Une idée courte suffit, sans nom ni prénom.",
     errors: {
       length: "Écris entre 3 et 60 lettres.",
       chars: "Utilise seulement des lettres et des chiffres.",
@@ -27,7 +29,7 @@ export const texts = {
   summary: {
     /** {animal}, {movement}, {power} sont remplacés par les fragments `summary` de la config. */
     sentence: "Tu vas créer un drone inspiré {animal}, {movement} et qui peut {power} !",
-    sentenceCustom: "Tu vas créer un drone inspiré {animal}, {movement}, avec le super pouvoir {power} !",
+    sentenceCustom: "Tes idées : {animal} · {movement} · {power}. À toi de dessiner ton drone !",
     cta: "À toi de le dessiner",
   },
   drawing: {
@@ -77,7 +79,6 @@ export const texts = {
     title: "Mon super drone",
     scan: "Scanne pour garder ton drone",
     linkValidity: "Lien valable {hours} h",
-    photoFallback: "Tu peux aussi photographier l'écran avec un téléphone.",
     again: "Créer un autre drone",
     email: "Recevoir par e-mail",
     preparingQr: "Préparation du lien…",
